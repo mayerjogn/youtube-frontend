@@ -266,13 +266,13 @@ const Home = ()=>{
             <h2>탐색</h2>
             {categories.map((category)=>(
               <a href="#" key={category.categoryCode}>
-                {category.categoryCode === 1 ? (<FontAwesomeIcon icon={faBagShopping}/>) :
-                 category.categoryCode===2 ? (<FontAwesomeIcon icon={faMusic}/>) :
+                {category.categoryCode=== 1 ? (<FontAwesomeIcon icon={faBagShopping}/>) :
+                category.categoryCode===2 ? (<FontAwesomeIcon icon={faMusic}/>) :
                 category.categoryCode===3 ? (<FontAwesomeIcon icon={faClapperboard}/>) :
                 category.categoryCode===4 ? (<FontAwesomeIcon icon={faGamepad}/>) :
                 category.categoryCode===5 ? (<FontAwesomeIcon icon={faMedal}/>) :
-                category.categoryCode === 6 ? (<FontAwesomeIcon icon={faLightbulb}/>) : null
-                 }
+                category.categoryCode=== 6 ? (<FontAwesomeIcon icon={faLightbulb}/>) : null
+                }
                 <p>{category.categoryName}</p>
             </a>
             ))}
