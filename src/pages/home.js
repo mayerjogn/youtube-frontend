@@ -8,11 +8,11 @@ import {
   faMedal,
   faMusic,
 } from "@fortawesome/free-solid-svg-icons";
-
-import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { faFolder} from "@fortawesome/free-regular-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFolder } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useState } from "react";
-import { getCategories } from "../api/video"
+import { getCategories } from "../api/video";
+import { getVideos } from "../api/video";
 
 const StyledAside = styled.aside`
   display: none;
@@ -50,15 +50,12 @@ const StyledAside = styled.aside`
     display: none;
   }
 `;
+
 const MainContent = styled.div`
-
-
-
-&.main-content {
+  &.main-content {
     padding-left: 70px;
-}
-
-nav {
+  }
+  nav {
     position: fixed;
     background-color: white;
     width: 100%;
@@ -67,71 +64,65 @@ nav {
     padding-left: 15px;
 
     a {
-       background-color: #eee;
-       padding: 5px 10px;
-       border-radius: 5px;
-       line-height: 56px;
-       margin: 5px;
+      background-color: #eee;
+      padding: 5px 10px;
+      border-radius: 5px;
+      line-height: 56px;
+      margin: 5px;
 
-
-    &.active {
-        background-color: #000;
+      &.active {
+        background-color: black;
         color: white;
+      }
     }
-    }
-}
-
-
-
-section {
+  }
+  section {
     padding-top: 56px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
 
     .video-content {
-        display: block;
-        width: 100%;
-        max-width: 400px;
-        margin: 10px;
-        margin-top: 20px;
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 10px;
+      margin-top: 20px;
 
-        video {
-            border-radius: 15px;
-            height: 220px;
-            object-fit: cover;
+      video {
+        border-radius: 15px;
+        height: 220px;
+        object-fit: cover;
+      }
+
+      .video-summary {
+        display: flex;
+        margin-top: 10px;
+        img {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          border-radius: 50%;
+          margin-right: 10px;
+          .video-desc h3 {
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            p {
+              font-size: 0.9rem;
+              color: #333;
+              line-height: 1.2;
+            }
+          }
         }
-
-        .video-summary {
-            display: flex;
-            margin-top: 10px;
-
-            img{
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                margin-right: 10px;
-            }
-
-            .video-desc {
-            h3 {
-                 line-height: 1.4;
-                 overflow: hidden;
-                 text-overflow: ellipsis;
-                 width: 100%;
-                 display: -webkit-box;
-                 -webkit-box-orient: vertical;
-                 -webkit-line-clamp: 2;
-                 }
-                 p {
-                     font-size: 0.9rem;
-                     color: #333;
-                     line-height: 1.2;
-                 }
-            }
+      }
     }
-}
-}`;
+  }
+`;
+
 const StyledMain = styled.main`
   padding-top: 56px;
   display: flex;
@@ -152,233 +143,246 @@ const StyledMain = styled.main`
         display: none;
       }
     }
-    .main-content {
+    main-content {
       padding-left: 70px;
     }
   }
-
-  @media screen and (min-width: 600px) {
-      .header-center{
-          justify-content: center;
-      }
-
-      .header-center input {
-          display: block;
-          padding: 10px 20px;
-          border:  1px solid #ddd;
-          width: 100%;
-          max-width: 600px;
-          border-top-left-radius: 50px;
-          border-bottom-left-radius: 50px;
-      }
-
-      .header-center button {
-          border: 1px solid #ddd;
-          border-left: none ;
-          border-top-right-radius: 50px;
-          border-bottom-right-radius: 50px;
-          background-color: #eee;
-          padding: 7.5px 20px;
-      }
-  }
   @media screen and (min-width: 927px) {
-      aside {
-          display: block;
-      }
-
-      section {
-          justify-content: flex-start;
-      }
-
+    aside {
+      display: block;
+    }
+    section {
+      justify-content: flex-start;
+    }
   }
 
   @media screen and (min-width: 1350px) {
-      aside {
-          width: 200px;
-      }
+    aside {
+      width: 200px;
+    }
 
-      aside a {
-          display: flex;
-      }
+    aside a {
+      display: flex;
+    }
 
-      aside a svg {
-          width: 30px;
-          margin-right: 20px;
-      }
+    aside a svg {
+      width: 30px;
+      margin-right: 20px;
+    }
 
-      aside a p {
-          margin-top: 0;
-          font-size: 1rem;
-      }
+    aside a p {
+      margin-top: 0;
+      font-size: 1rem;
+    }
 
-      .main-content {
-          padding-left: 200px;
-      }
+    .main-content {
+      padding-left: 200px;
+    }
 
-      .aside-category {
-          display: block;
-      }
+    .aside-category {
+      display: block;
+    }
 
-      .aside-category h2 {
-          margin: 20px;
-          margin: 22px 22px 0;
-      }
+    .aside-category h2 {
+      margin: 22px 22px 0;
+    }
 
-      footer {
-          display: block;
-          margin: 22px;
-      }
+    footer {
+      display: block;
+      margin: 22px;
+    }
 
-      .video-content{
-          max-width: 390px;
-      }
+    .video-content {
+      max-width: 390px;
+    }
+  }
+`;
 
-    }`;
+const Home = () => {
+  const [categories, setCategories] = useState([]);
+  const [videos, setvideos] = useState([]);
 
-const Home = ()=>{
-    const [categories, setCategories] = useState([]);
+  const categoryAPI = async () => {
+    const result = await getCategories();
+    setCategories(result.data);
+  };
 
-    const categoryAPI = async () => {
-        const result = await getCategories();
-        setCategories(result.data);
-    };
+  const videoAPI = async () => {
+    const result = await getVideos();
+    setvideos(result.data);
+  };
 
-    useEffect(() => {
-        categoryAPI();
-//     fetch("http://localhost:8080/api/category").then((response)=>
-//     response.json()).then((json)=>{console.log(json);setCategories(json);
-//   })
+  useEffect(() => {
+    categoryAPI();
+    videoAPI();
+    // fetch("http://localhost:8080/api/category")
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log(json);
+    //     setCategories(json);
+    //   });
   }, []);
-  return(
+
+  return (
     <StyledMain>
       <StyledAside>
         <div className="aside-top">
-            <a href="#">
-                <FontAwesomeIcon icon={faHouse}/>
-                <p>홈</p>
-            </a>
-            <a href="#">
-                 <FontAwesomeIcon icon={faFolder}/>
-                <p>구독</p>
-            </a>
+          <a href="#">
+            <FontAwesomeIcon icon={faHouse} />
+            <p>홈</p>
+          </a>
+          <a href="#">
+            <FontAwesomeIcon icon={faFolder} />
+
+            <p>구독</p>
+          </a>
         </div>
         <div className="aside-category">
-            <h2>탐색</h2>
-            {categories.map((category)=>(
-              <a href="#" key={category.categoryCode}>
-                {category.categoryCode=== 1 ? (<FontAwesomeIcon icon={faBagShopping}/>) :
-                category.categoryCode===2 ? (<FontAwesomeIcon icon={faMusic}/>) :
-                category.categoryCode===3 ? (<FontAwesomeIcon icon={faClapperboard}/>) :
-                category.categoryCode===4 ? (<FontAwesomeIcon icon={faGamepad}/>) :
-                category.categoryCode===5 ? (<FontAwesomeIcon icon={faMedal}/>) :
-                category.categoryCode=== 6 ? (<FontAwesomeIcon icon={faLightbulb}/>) : null
-                }
-                <p>{category.categoryName}</p>
+          <h2>탐색</h2>
+          {categories.map((item) => (
+            <a href="#" key={item.categoryCode}>
+              {item.categoryCode === 1 ? (
+                <FontAwesomeIcon icon={faBagShopping} />
+              ) : item.categoryCode === 2 ? (
+                <FontAwesomeIcon icon={faMusic} />
+              ) : item.categoryCode === 3 ? (
+                <FontAwesomeIcon icon={faClapperboard} />
+              ) : item.categoryCode === 4 ? (
+                <FontAwesomeIcon icon={faGamepad} />
+              ) : item.categoryCode === 5 ? (
+                <FontAwesomeIcon icon={faMedal} />
+              ) : item.categoryCode === 6 ? (
+                <FontAwesomeIcon icon={faLightbulb} />
+              ) : null}
+              <p>{item.categoryName}</p>
             </a>
-            ))}
+          ))}
         </div>
-        <footer>
-            개인정보처리방침
-        </footer>
+        <footer>개인정보처리방침</footer>
       </StyledAside>
+
       <MainContent className="main-content">
         <nav>
-            <a href="#" className="active">전체</a>
-            {categories.map((category) => (<a href="#" key={category.categoryCode}>{category.categoryName}</a>))}
+          <a href="#" className="active">
+            전체
+          </a>
+          {categories.map((item) => (
+            <a key={item.categoryCode} href="#">
+              {item.categoryName}
+            </a>
+          ))}
         </nav>
         <section>
-          {/*
-            <a href="#" className="video-content">
-                <video width="100%"  poster="./resources/thumbnail.jpg" autoplay loop controls>
-                    <source src="./resources/video (1).mp4" type="video/mp4" />
-                </video>
-                <div className="video-summary">
-                    <img src="./resources/thumbnail.jpg" alt="채널 이미지">
-                    <div className="video-desc">
-                        <h3>"한국 사람들은 소풍가서 이렇게 먹어?! 캐나다에서 김밥 팔자는 엄마.." 김밥에 라면 처음 먹어본 캐나다 가족 반응! 라면 국물에 김밥 찍어먹더니.. 외국인 김밥먹방 [국제커플]</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수<span>9.1만</span>회
-                            <span>1일</span> 전
-                        </p>
-                    </div>
+          {videos.map((item) => (
+            <a href="#" key={item.videoCode} className="video-content">
+              <video
+                width="100%"
+                poster={"/upload/" + item.videoPhoto}
+                autoPlay
+                loop
+                controls
+              >
+                <source src={"/upload/" + item.videoUrl} type="video/mp4" />
+              </video>
+              <div className="video-summary">
+                <img
+                  src={"/upload/" + item.channel.channelPhoto}
+                  alt="채널이미지"
+                />
+                <div className="video-desc">
+                  <h3>{item.videoTitle}</h3>
+                  <p>{item.channel.channelName}</p>
+                  <p>
+                    조회수 <span>{item.videoViews}</span>회 .<span>1일</span>전
+                  </p>
                 </div>
+              </div>
             </a>
-            <a href="#" className="video-content">
-                <video width="100%"  poster="./resources/thumbnail.jpg" autoplay loop controls>
-                    <source src="./resources/video (1).mp4" type="video/mp4" />
+          ))}
+          {/* <a href="#" className="video-content">
+                        <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
+                            <source src="./resource/video.mp4" type="video/mp4" />
+                        </video>
+                        <div className="video-summary">
+                            <img src="./resource/thumbnail.jpg" alt="채널이미지" />
+                            <div className="video-desc">
+                                <h3>"한국 사람들은 소풍가서 이렇게 먹어?! 캐나다에서 김밥 팔자는 엄마.." 김밥에 라면 처음 먹어본 캐나다 가족 반응! 라면 국물에 김밥 찍어먹더니.. 외국인 김밥먹방 [국제커플]</h3>
+                                <p>tvN</p>
+                                <p>
+                                    조회수 <span>9.1만</span>회 .
+                                    <span>1일</span>전
+                                </p>
+                            </div>
+                        </div>
+                    </a> */}
+
+          {/* <a href="#" className="video-content">
+                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
+                    <source src="./resource/video.mp4" type="video/mp4"/>
                 </video>
                 <div className="video-summary">
-                    <img src="./resources/thumbnail.jpg" alt="채널 이미지">
+                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
                     <div className="video-desc">
                         <h3>부산촌놈 마지막화..!</h3>
                         <p>tvN</p>
                         <p>
-                            조회수<span>9.1만</span>회
-                            <span>1일</span> 전
-                        </p>
-                    </div>
-                </div>
-            </a>
-            <a href="#" className="video-content">
-                <video width="100%"  poster="./resources/thumbnail.jpg" autoplay loop controls>
-                    <source src="./resources/video (1).mp4" type="video/mp4" />
-                </video>
-                <div className="video-summary">
-                    <img src="./resources/thumbnail.jpg" alt="채널 이미지">
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수<span>9.1만</span>회
-                            <span>1일</span> 전
-                        </p>
-                    </div>
-                </div>
-            </a>
-             <a href="#" className="video-content">
-                <video width="100%"  poster="./resources/thumbnail.jpg" autoplay loop controls>
-                    <source src="./resources/video (1).mp4" type="video/mp4" />
-                </video>
-                <div className="video-summary">
-                    <img src="./resources/thumbnail.jpg" alt="채널 이미지">
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수<span>9.1만</span>회
-                            <span>1일</span> 전
+                            조회수 <span>9.1만</span>회 .
+                            <span>1일</span>전
                         </p>
                     </div>
                 </div>
             </a>
             <a href="#" className="video-content">
-                <video width="100%"  poster="./resources/thumbnail.jpg" autoplay loop controls>
-                    <source src="./resources/video (1).mp4" type="video/mp4" />
+                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
+                    <source src="./resource/video.mp4" type="video/mp4"/>
                 </video>
                 <div className="video-summary">
-                    <img src="./resources/thumbnail.jpg" alt="채널 이미지">
+                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
                     <div className="video-desc">
                         <h3>부산촌놈 마지막화..!</h3>
                         <p>tvN</p>
                         <p>
-                            조회수<span>9.1만</span>회
-                            <span>1일</span> 전
+                            조회수 <span>9.1만</span>회 .
+                            <span>1일</span>전
                         </p>
                     </div>
                 </div>
             </a>
-           */}
+            <a href="#" className="video-content">
+                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
+                    <source src="./resource/video.mp4" type="video/mp4"/>
+                </video>
+                <div className="video-summary">
+                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
+                    <div className="video-desc">
+                        <h3>부산촌놈 마지막화..!</h3>
+                        <p>tvN</p>
+                        <p>
+                            조회수 <span>9.1만</span>회 .
+                            <span>1일</span>전
+                        </p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" className="video-content">
+                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
+                    <source src="./resource/video.mp4" type="video/mp4"/>
+                </video>
+                <div className="video-summary">
+                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
+                    <div className="video-desc">
+                        <h3>부산촌놈 마지막화..!</h3>
+                        <p>tvN</p>
+                        <p>
+                            조회수 <span>9.1만</span>회 .
+                            <span>1일</span>전
+                        </p>
+                    </div>
+                </div>
+            </a> */}
         </section>
       </MainContent>
     </StyledMain>
   );
-}
+};
 export default Home;
-
-
-
-
-
-
-
