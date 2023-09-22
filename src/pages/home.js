@@ -13,6 +13,7 @@ import { faFolder } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useState } from "react";
 import { getCategories } from "../api/video";
 import { getVideos } from "../api/video";
+import { useInView } from "react-intersection-observer";
 
 const StyledAside = styled.aside`
   display: none;
@@ -199,8 +200,20 @@ const StyledMain = styled.main`
 `;
 
 const Home = () => {
+
+     // 카테고리들 가져오기
   const [categories, setCategories] = useState([]);
-  const [videos, setvideos] = useState([]);
+
+    // 비디오 전체 리스트 가져오기
+  const [videos, setVideos] = useState([]);
+
+  // 무한 페이징 설정
+  const [ref, inView] = useInView();
+  const [page, setPage] = useState(1); // 바뀌는건 항상 useState를 사용해야함
+
+  // 카테고리별로 게시물보이게 하기
+  const [category, setCategory] = useState(null);
+
 
   const categoryAPI = async () => {
     const result = await getCategories();
@@ -208,13 +221,22 @@ const Home = () => {
   };
 
   const videoAPI = async () => {
-    const result = await getVideos();
-    setvideos(result.data);
+    // database 연결해야하는 부분
+    // -> Spring + MyBatis(동적쿼리) / Spring Boot + JPA(JPQL, @Query)
+    // --> QueryDSL
+    const result = await getVideos(page, category);
+    console.log(result.data);
+    setVideos([...videos, ...result.data]);
   };
+
+  const categoryFilterAPI = async () => {
+    const result = await getVideos(page, category);
+    setVideos(result.data)
+  }
 
   useEffect(() => {
     categoryAPI();
-    videoAPI();
+  //  videoAPI();
     // fetch("http://localhost:8080/api/category")
     //   .then((response) => response.json())
     //   .then((json) => {
@@ -222,6 +244,32 @@ const Home = () => {
     //     setCategories(json);
     //   });
   }, []);
+
+  
+  useEffect(() => {
+    if (inView) {
+      console.log(`${inView} : 무한 스크롤 요청이 들어가야하는 부분!`);
+      videoAPI();
+      setPage(page + 1);
+    }
+  }, [inView]);
+
+  useEffect(() => { 
+    if (category != null) {
+      console.log(category);
+    categoryFilterAPI();
+    }
+    
+  }, [category]);
+
+  
+ const filterCategory = (e) => {
+    e.preventDefault();
+    const href = e.target.href.split("/");
+    console.log(href[href.length - 1]);
+    setCategory(parseInt(href[href.length - 1]));
+    setPage(1);
+  };
 
   return (
     <StyledMain>
@@ -239,22 +287,22 @@ const Home = () => {
         </div>
         <div className="aside-category">
           <h2>탐색</h2>
-          {categories.map((item) => (
-            <a href="#" key={item.categoryCode}>
-              {item.categoryCode === 1 ? (
+          {categories.map((category) => (
+            <a href="#" key={category.categoryCode}>
+              {category.categoryCode === 1 ? (
                 <FontAwesomeIcon icon={faBagShopping} />
-              ) : item.categoryCode === 2 ? (
+              ) : category.categoryCode === 2 ? (
                 <FontAwesomeIcon icon={faMusic} />
-              ) : item.categoryCode === 3 ? (
+              ) : category.categoryCode === 3 ? (
                 <FontAwesomeIcon icon={faClapperboard} />
-              ) : item.categoryCode === 4 ? (
+              ) : category.categoryCode === 4 ? (
                 <FontAwesomeIcon icon={faGamepad} />
-              ) : item.categoryCode === 5 ? (
+              ) : category.categoryCode === 5 ? (
                 <FontAwesomeIcon icon={faMedal} />
-              ) : item.categoryCode === 6 ? (
+              ) : category.categoryCode === 6 ? (
                 <FontAwesomeIcon icon={faLightbulb} />
               ) : null}
-              <p>{item.categoryName}</p>
+              <p>{category.categoryName}</p>
             </a>
           ))}
         </div>
@@ -266,15 +314,18 @@ const Home = () => {
           <a href="#" className="active">
             전체
           </a>
-          {categories.map((item) => (
-            <a key={item.categoryCode} href="#">
-              {item.categoryName}
+          {categories.map((category) => (
+            <a href={category.categoryCode}
+               onClick={filterCategory}
+              key={category.categoryCode} >
+              {category.categoryName}
             </a>
           ))}
         </nav>
         <section>
           {videos.map((item) => (
             <a href="#" key={item.videoCode} className="video-content">
+             
               <video
                 width="100%"
                 poster={"/upload/" + item.videoPhoto}
@@ -299,87 +350,7 @@ const Home = () => {
               </div>
             </a>
           ))}
-          {/* <a href="#" className="video-content">
-                        <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
-                            <source src="./resource/video.mp4" type="video/mp4" />
-                        </video>
-                        <div className="video-summary">
-                            <img src="./resource/thumbnail.jpg" alt="채널이미지" />
-                            <div className="video-desc">
-                                <h3>"한국 사람들은 소풍가서 이렇게 먹어?! 캐나다에서 김밥 팔자는 엄마.." 김밥에 라면 처음 먹어본 캐나다 가족 반응! 라면 국물에 김밥 찍어먹더니.. 외국인 김밥먹방 [국제커플]</h3>
-                                <p>tvN</p>
-                                <p>
-                                    조회수 <span>9.1만</span>회 .
-                                    <span>1일</span>전
-                                </p>
-                            </div>
-                        </div>
-                    </a> */}
-
-          {/* <a href="#" className="video-content">
-                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
-                    <source src="./resource/video.mp4" type="video/mp4"/>
-                </video>
-                <div className="video-summary">
-                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수 <span>9.1만</span>회 .
-                            <span>1일</span>전
-                        </p>
-                    </div>
-                </div>
-            </a>
-            <a href="#" className="video-content">
-                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
-                    <source src="./resource/video.mp4" type="video/mp4"/>
-                </video>
-                <div className="video-summary">
-                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수 <span>9.1만</span>회 .
-                            <span>1일</span>전
-                        </p>
-                    </div>
-                </div>
-            </a>
-            <a href="#" className="video-content">
-                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
-                    <source src="./resource/video.mp4" type="video/mp4"/>
-                </video>
-                <div className="video-summary">
-                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수 <span>9.1만</span>회 .
-                            <span>1일</span>전
-                        </p>
-                    </div>
-                </div>
-            </a>
-            <a href="#" className="video-content">
-                <video width="100%" poster="./resource/thumbnail.jpg" autoPlay loop controls>
-                    <source src="./resource/video.mp4" type="video/mp4"/>
-                </video>
-                <div className="video-summary">
-                    <img src="./resource/thumbnail.jpg" alt="채널이미지" />
-                    <div className="video-desc">
-                        <h3>부산촌놈 마지막화..!</h3>
-                        <p>tvN</p>
-                        <p>
-                            조회수 <span>9.1만</span>회 .
-                            <span>1일</span>전
-                        </p>
-                    </div>
-                </div>
-            </a> */}
+          <div ref={ref}></div>{/* 페이지가 끝나는 시점 */}
         </section>
       </MainContent>
     </StyledMain>
