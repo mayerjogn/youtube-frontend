@@ -1,29 +1,31 @@
-import { createBrowserRouter } from "react-router-dom";
-import Home from "./pages/Home";
-import Watch from "./pages/Watch";
-import Layout from "./components/Layout";
-import NotFound from "./pages/NotFound";
-import Create from "./pages/Create";
+import { createBrowserRouter } from 'react-router-dom';
+import Home from './pages/Home';
+import Watch from './pages/Watch';
+import Layout from './components/Layout';
+import NotFound from './pages/NotFound';
+import Create from './pages/Create';
+
+// npx create-react-app 7-jsx
 const router = createBrowserRouter([
-    { 
-        path: "/",
+    {
+        path: '/',
         element: <Layout />,
-        errorElement: <NotFound/>,
+        errorElement: <NotFound />,
         children: [
             {
                 index: true,
-                element: <Home/>
+                element: <Home />,
             },
             {
-                path: "watch",
-                element: <Watch />
-            }
-        ]
+                path: 'watch',
+                element: <Watch />,
+            },
+        ],
     },
     {
-        path: "/create",
-        element: <Create/>
-    }
+        path: '/create',
+        element: <Create />,
+    },
 ]);
 
 export default router;
